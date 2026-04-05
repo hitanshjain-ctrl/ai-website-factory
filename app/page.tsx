@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 
 export default function Home() {
-  const titleRef = useRef(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (titleRef.current) {
