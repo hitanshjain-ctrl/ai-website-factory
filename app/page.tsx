@@ -1,46 +1,81 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 
 export default function Home() {
+  const { scrollYProgress } = useScroll();
+
+  // HERO animation
+  const heroScale = useTransform(scrollYProgress, [0, 0.3], [1, 1.3]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0]);
+
+  // SECTION text animation
+  const textY = useTransform(scrollYProgress, [0.3, 0.6], [100, 0]);
+  const textOpacity = useTransform(scrollYProgress, [0.3, 0.6], [0, 1]);
+
   return (
-    <main className="bg-black text-white">
+    <main className="bg-black text-white overflow-x-hidden">
 
       {/* HERO SECTION */}
-      <section className="h-screen flex flex-col items-center justify-center text-center px-4">
+      <section className="h-screen flex flex-col items-center justify-center text-center relative">
 
         <motion.h1
-          initial={{ y: -120, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 1 }}
-          className="text-5xl md:text-7xl font-bold mb-4"
+          style={{ scale: heroScale, opacity: heroOpacity }}
+          className="text-5xl md:text-7xl font-bold"
         >
-          Premium Website
+          AI Website Factory
         </motion.h1>
 
         <motion.p
-          initial={{ y: 80, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.4, duration: 1 }}
-          className="text-lg text-gray-400 max-w-xl"
+          style={{ opacity: heroOpacity }}
+          className="mt-4 text-gray-400 text-lg"
         >
-          Built with Next.js + AI 🚀  
-          Experience smooth animations and modern UI.
+          Build premium websites in minutes 🚀
         </motion.p>
 
-        <motion.button
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          whileHover={{ scale: 1.1 }}
-          transition={{ delay: 0.8, type: "spring" }}
-          className="mt-8 px-8 py-3 bg-white text-black rounded-full"
-        >
-          Get Started
-        </motion.button>
+        {/* Glow background */}
+        <div className="absolute w-[600px] h-[600px] bg-purple-600 opacity-20 blur-3xl" />
       </section>
 
-      {/* SECTION 2 */}
-      <section className="h-screen flex items-center justify-center px-4">
+      {/* STORY SECTION */}
+      <section className="h-[150vh] flex items-center justify-center">
+        <motion.div
+          style={{ y: textY, opacity: textOpacity }}
+          className="text-center max-w-2xl"
+        >
+          <h2 className="text-5xl font-bold mb-4">
+            Cinematic Experience
+          </h2>
+          <p className="text-gray-400">
+            Smooth animations that feel like a product launch video.
+          </p>
+        </motion.div>
+      </section>
+
+      {/* PARALLAX SECTION */}
+      <section className="h-[150vh] flex items-center justify-center relative">
+
+        <motion.div
+          style={{
+            scale: useTransform(scrollYProgress, [0.6, 1], [0.8, 1.2]),
+            rotate: useTransform(scrollYProgress, [0.6, 1], [0, 15]),
+          }}
+          className="w-64 h-64 bg-white rounded-3xl"
+        />
+
+        <motion.h2
+          style={{
+            opacity: useTransform(scrollYProgress, [0.6, 0.8], [0, 1]),
+          }}
+          className="absolute bottom-20 text-3xl"
+        >
+          Interactive UI ⚡
+        </motion.h2>
+
+      </section>
+
+      {/* FINAL CTA */}
+      <section className="h-screen flex items-center justify-center">
         <motion.div
           initial={{ opacity: 0, y: 100 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -48,28 +83,12 @@ export default function Home() {
           className="text-center"
         >
           <h2 className="text-4xl font-bold mb-4">
-            Stunning Animations
+            Ready to Launch?
           </h2>
-          <p className="text-gray-400">
-            Smooth transitions that feel premium and modern.
-          </p>
-        </motion.div>
-      </section>
 
-      {/* SECTION 3 */}
-      <section className="h-screen flex items-center justify-center px-4">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1 }}
-          className="text-center"
-        >
-          <h2 className="text-4xl font-bold mb-4">
-            Built for Businesses
-          </h2>
-          <p className="text-gray-400">
-            Perfect for shops, brands, and startups.
-          </p>
+          <button className="px-8 py-3 bg-white text-black rounded-full">
+            Start Building
+          </button>
         </motion.div>
       </section>
 
