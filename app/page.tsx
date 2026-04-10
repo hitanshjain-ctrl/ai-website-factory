@@ -20,10 +20,14 @@ export default function Home() {
   const textY = useTransform(scrollYProgress, [0.3, 0.6], [100, 0]);
   const textOpacity = useTransform(scrollYProgress, [0.3, 0.6], [0, 1]);
 
+  // PARALLAX BOX
+  const boxScale = useTransform(scrollYProgress, [0.6, 1], [0.8, 1.2]);
+  const boxRotate = useTransform(scrollYProgress, [0.6, 1], [0, 15]);
+
   return (
     <main
       onMouseMove={handleMouseMove}
-      className="bg-black text-white overflow-x-hidden relative scroll-smooth"
+      className="bg-black text-white overflow-x-hidden relative"
     >
 
       {/* 🔥 MOUSE GLOW */}
@@ -36,7 +40,17 @@ export default function Home() {
         transition={{ type: "tween", ease: "linear", duration: 0.15 }}
       />
 
-      {/* HERO SECTION */}
+      {/* 🔥 CUSTOM CURSOR */}
+      <motion.div
+        className="pointer-events-none fixed w-4 h-4 bg-white rounded-full z-50 mix-blend-difference"
+        animate={{
+          x: mouse.x - 8,
+          y: mouse.y - 8,
+        }}
+        transition={{ type: "tween", ease: "linear", duration: 0.1 }}
+      />
+
+      {/* HERO */}
       <section className="h-screen flex flex-col items-center justify-center text-center relative">
 
         <motion.h1
@@ -59,19 +73,27 @@ export default function Home() {
 
         {/* 🔥 MAGNETIC BUTTON */}
         <motion.button
-          whileHover={{ scale: 1.15 }}
-          whileTap={{ scale: 0.95 }}
-          transition={{ type: "spring", stiffness: 300 }}
-          className="mt-8 px-8 py-3 bg-white text-black rounded-full"
+          onMouseMove={(e) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            e.currentTarget.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = "translate(0px, 0px)";
+          }}
+          whileHover={{ scale: 1.1 }}
+          className="mt-8 px-8 py-3 bg-white text-black rounded-full transition-transform duration-200"
         >
           Start Building
         </motion.button>
 
-        {/* Glow background */}
+        {/* Background Glow */}
         <div className="absolute w-[600px] h-[600px] bg-purple-600 opacity-20 blur-3xl" />
       </section>
 
-      {/* STORY SECTION */}
+      {/* STORY */}
       <section className="h-[150vh] flex items-center justify-center">
         <motion.div
           style={{ y: textY, opacity: textOpacity }}
@@ -81,18 +103,18 @@ export default function Home() {
             Cinematic Experience
           </h2>
           <p className="text-gray-400">
-            Smooth animations that feel like a product launch video.
+            Feels like a premium product launch.
           </p>
         </motion.div>
       </section>
 
-      {/* PARALLAX SECTION */}
+      {/* PARALLAX */}
       <section className="h-[150vh] flex items-center justify-center relative">
 
         <motion.div
           style={{
-            scale: useTransform(scrollYProgress, [0.6, 1], [0.8, 1.2]),
-            rotate: useTransform(scrollYProgress, [0.6, 1], [0, 15]),
+            scale: boxScale,
+            rotate: boxRotate,
           }}
           className="w-64 h-64 bg-white rounded-3xl"
         />
@@ -120,9 +142,12 @@ export default function Home() {
             Ready to Launch?
           </h2>
 
-          <button className="px-8 py-3 bg-white text-black rounded-full">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            className="px-8 py-3 bg-white text-black rounded-full"
+          >
             Start Building
-          </button>
+          </motion.button>
         </motion.div>
       </section>
 
