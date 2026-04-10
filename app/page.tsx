@@ -1,9 +1,16 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useState } from "react";
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
+
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: any) => {
+    setMouse({ x: e.clientX, y: e.clientY });
+  };
 
   // HERO animation
   const heroScale = useTransform(scrollYProgress, [0, 0.3], [1, 1.3]);
@@ -14,13 +21,30 @@ export default function Home() {
   const textOpacity = useTransform(scrollYProgress, [0.3, 0.6], [0, 1]);
 
   return (
-    <main className="bg-black text-white overflow-x-hidden">
+    <main
+      onMouseMove={handleMouseMove}
+      className="bg-black text-white overflow-x-hidden relative scroll-smooth"
+    >
+
+      {/* 🔥 MOUSE GLOW */}
+      <motion.div
+        className="pointer-events-none fixed w-[400px] h-[400px] bg-purple-500 rounded-full blur-3xl opacity-20"
+        animate={{
+          x: mouse.x - 200,
+          y: mouse.y - 200,
+        }}
+        transition={{ type: "tween", ease: "linear", duration: 0.15 }}
+      />
 
       {/* HERO SECTION */}
       <section className="h-screen flex flex-col items-center justify-center text-center relative">
 
         <motion.h1
           style={{ scale: heroScale, opacity: heroOpacity }}
+          animate={{
+            x: mouse.x * 0.02,
+            y: mouse.y * 0.02,
+          }}
           className="text-5xl md:text-7xl font-bold"
         >
           AI Website Factory
@@ -32,6 +56,16 @@ export default function Home() {
         >
           Build premium websites in minutes 🚀
         </motion.p>
+
+        {/* 🔥 MAGNETIC BUTTON */}
+        <motion.button
+          whileHover={{ scale: 1.15 }}
+          whileTap={{ scale: 0.95 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          className="mt-8 px-8 py-3 bg-white text-black rounded-full"
+        >
+          Start Building
+        </motion.button>
 
         {/* Glow background */}
         <div className="absolute w-[600px] h-[600px] bg-purple-600 opacity-20 blur-3xl" />
