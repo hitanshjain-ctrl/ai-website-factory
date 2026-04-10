@@ -5,7 +5,10 @@ import { useState } from "react";
 
 export default function Home() {
   const { scrollYProgress } = useScroll();
+
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  const [prompt, setPrompt] = useState("");
+  const [generated, setGenerated] = useState("");
 
   const handleMouseMove = (e: any) => {
     setMouse({ x: e.clientX, y: e.clientY });
@@ -22,6 +25,16 @@ export default function Home() {
   // PARALLAX card
   const cardScale = useTransform(scrollYProgress, [0.5, 1], [0.7, 1.2]);
   const cardRotate = useTransform(scrollYProgress, [0.5, 1], [0, 20]);
+
+  const generateWebsite = async () => {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      body: JSON.stringify({ prompt }),
+    });
+
+    const data = await res.json();
+    setGenerated(data.code);
+  };
 
   return (
     <main
@@ -59,20 +72,28 @@ export default function Home() {
           Build cinematic websites like Apple launches 🚀
         </motion.p>
 
-        {/* Magnetic Button */}
+        {/* 🔥 INPUT */}
+        <input
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder="Describe your website (e.g. gym, startup...)"
+          className="mt-6 px-4 py-3 rounded-lg text-black w-80"
+        />
+
+        {/* 🔥 GENERATE BUTTON */}
         <motion.button
+          onClick={generateWebsite}
           whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 0.9 }}
-          transition={{ type: "spring", stiffness: 300 }}
-          className="mt-8 px-8 py-3 bg-white text-black rounded-full shadow-lg"
+          className="mt-4 px-6 py-3 bg-purple-500 rounded-lg"
         >
-          Start Building
+          Generate Website
         </motion.button>
 
         <div className="absolute w-[600px] h-[600px] bg-purple-600 opacity-20 blur-3xl" />
       </section>
 
-      {/* 🎥 SCROLL STORY (REEL STYLE) */}
+      {/* 🎥 SCROLL STORY */}
       <section className="h-[200vh] flex items-center justify-center">
         <motion.div
           style={{ y: textY, opacity: textOpacity }}
@@ -87,7 +108,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* 🍎 APPLE-STYLE PRODUCT FOCUS */}
+      {/* 🍎 PRODUCT SECTION */}
       <section className="h-[200vh] flex items-center justify-center relative">
 
         <motion.div
@@ -129,6 +150,16 @@ export default function Home() {
           </motion.button>
         </motion.div>
       </section>
+
+      {/* 🔥 GENERATED RESULT */}
+      {generated && (
+        <div className="p-10 bg-black border-t border-gray-700">
+          <h2 className="text-2xl mb-4">Generated Code:</h2>
+          <pre className="text-green-400 text-sm whitespace-pre-wrap">
+            {generated}
+          </pre>
+        </div>
+      )}
 
     </main>
   );
