@@ -8,7 +8,7 @@ export default function Home() {
 
   const [mouse, setMouse] = useState({ x: 0, y: 0 });
   const [prompt, setPrompt] = useState("");
-  const [generated, setGenerated] = useState("");
+  const [html, setHtml] = useState("");
 
   const handleMouseMove = (e: any) => {
     setMouse({ x: e.clientX, y: e.clientY });
@@ -26,21 +26,12 @@ export default function Home() {
   const cardScale = useTransform(scrollYProgress, [0.5, 1], [0.7, 1.2]);
   const cardRotate = useTransform(scrollYProgress, [0.5, 1], [0, 20]);
 
-  const generateWebsite = async () => {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      body: JSON.stringify({ prompt }),
-    });
-
-    const data = await res.json();
-    setGenerated(data.code);
-  };
-
   return (
     <main
       onMouseMove={handleMouseMove}
       className="bg-black text-white overflow-x-hidden relative scroll-smooth"
     >
+
       {/* 🔥 MOUSE GLOW */}
       <motion.div
         className="pointer-events-none fixed w-[400px] h-[400px] bg-purple-500 rounded-full blur-3xl opacity-20 z-0"
@@ -72,22 +63,13 @@ export default function Home() {
           Build cinematic websites like Apple launches 🚀
         </motion.p>
 
-        {/* 🔥 INPUT */}
-        <input
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe your website (e.g. gym, startup...)"
-          className="mt-6 px-4 py-3 rounded-lg text-black w-80"
-        />
-
-        {/* 🔥 GENERATE BUTTON */}
         <motion.button
-          onClick={generateWebsite}
           whileHover={{ scale: 1.2 }}
           whileTap={{ scale: 0.9 }}
-          className="mt-4 px-6 py-3 bg-purple-500 rounded-lg"
+          transition={{ type: "spring", stiffness: 300 }}
+          className="mt-8 px-8 py-3 bg-white text-black rounded-full shadow-lg"
         >
-          Generate Website
+          Explore ↓
         </motion.button>
 
         <div className="absolute w-[600px] h-[600px] bg-purple-600 opacity-20 blur-3xl" />
@@ -108,7 +90,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* 🍎 PRODUCT SECTION */}
+      {/* 🍎 APPLE PRODUCT SECTION */}
       <section className="h-[200vh] flex items-center justify-center relative">
 
         <motion.div
@@ -130,6 +112,48 @@ export default function Home() {
 
       </section>
 
+      {/* 🤖 AI GENERATOR SECTION */}
+      <section className="min-h-screen flex flex-col items-center justify-center px-4">
+
+        <h2 className="text-4xl font-bold mb-6 text-center">
+          Create Your Website with AI
+        </h2>
+
+        <input
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+          placeholder="e.g. modern gym website, luxury brand..."
+          className="px-4 py-3 rounded bg-black border border-gray-600 w-[300px]"
+        />
+
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          onClick={async () => {
+            const res = await fetch("/api/generate", {
+              method: "POST",
+              body: JSON.stringify({ prompt }),
+            });
+
+            const data = await res.json();
+            setHtml(data.html);
+          }}
+          className="mt-4 px-6 py-3 bg-purple-600 rounded"
+        >
+          Generate Website
+        </motion.button>
+
+        {/* 🔥 LIVE PREVIEW */}
+        {html && (
+          <div className="mt-10 w-full max-w-5xl h-[500px] border border-gray-700 rounded overflow-hidden">
+            <iframe
+              srcDoc={html}
+              className="w-full h-full bg-white"
+            />
+          </div>
+        )}
+
+      </section>
+
       {/* 🚀 FINAL CTA */}
       <section className="h-screen flex items-center justify-center">
         <motion.div
@@ -139,27 +163,17 @@ export default function Home() {
           className="text-center"
         >
           <h2 className="text-4xl font-bold mb-4">
-            Ready to Launch?
+            Ready to Launch Your Startup?
           </h2>
 
           <motion.button
             whileHover={{ scale: 1.15 }}
             className="px-10 py-4 bg-white text-black rounded-full"
           >
-            Create Website
+            Start Now 🚀
           </motion.button>
         </motion.div>
       </section>
-
-      {/* 🔥 GENERATED RESULT */}
-      {generated && (
-        <div className="p-10 bg-black border-t border-gray-700">
-          <h2 className="text-2xl mb-4">Generated Code:</h2>
-          <pre className="text-green-400 text-sm whitespace-pre-wrap">
-            {generated}
-          </pre>
-        </div>
-      )}
 
     </main>
   );
